@@ -1,4 +1,7 @@
-build:
+version: 2
+
+jobs:
+  build:
     docker:
       - image: circleci/node:8.9.4
     working_directory: ~/core-qix-session-workout

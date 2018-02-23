@@ -199,7 +199,7 @@ async function connect() {
       const GUID = generateGUID();
       // sendLog(JSON.stringify(getEnigmaConfig(cookie, GUID)));
 
-      let qix = await enigma.create(getEnigmaConfig(cookie, GUID)).open();
+      const qix = await enigma.create(getEnigmaConfig(cookie, GUID)).open();
       qix.on('closed', () => { closedSessions += 1; }); // eslint-disable-line no-loop-func
 
       if (DIRECT === 'true') await qix.openDoc(DOCPATH);
@@ -241,7 +241,7 @@ exports.start = async (workerNr) => {
   sendInfo(); // Initial information send
 
   const selectionsIntevalFn = setInterval(() => {
-    // makeRandomSelection(sessions);
+    makeRandomSelection(sessions);
   }, SELECTION_INTERVAL);
 
   await connect(sessions);

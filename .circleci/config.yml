@@ -1,0 +1,23 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.9.4
+    working_directory: ~/core-qix-session-workout
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command:
+            npm install --quiet
+      - run:
+          name: Run ESLint
+          command:
+            npm run lint
+      - save_cache:
+          key: npm-dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules

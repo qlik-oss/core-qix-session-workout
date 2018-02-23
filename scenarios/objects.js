@@ -47,6 +47,6 @@ exports.createObjects = async (session, OBJECTS) => {
     const qInfo = await app.createSessionObject(sessionObjectDef(object[0], object[1]))
       .then(x => x.getLayout())
       .then(layout => ({ qInfo: layout.qInfo }));
-    // console.log(qInfo);
+    console.log(qInfo);
   }));
 };

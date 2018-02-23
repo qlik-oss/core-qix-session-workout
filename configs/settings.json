@@ -1,0 +1,12 @@
+{
+    "max": 1000,
+    "threads": 10,
+    "interval": 0,
+    "selectionRatio": 0,
+    "gateway": "52.49.179.2",
+    "objects":[],
+    "keepAlive": true,
+    "direct": true,
+    "cookie": "qliktive=1",
+    "docpath": "/doc/drugcases.qvf"
+}

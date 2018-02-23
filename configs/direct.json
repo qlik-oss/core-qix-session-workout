@@ -1,0 +1,10 @@
+{
+    "max": 500,
+    "threads": 10,
+    "gateway": "localhost",
+    "direct": true,
+    "docpath": "drugcases.qvf",
+    "objects":[],
+    "cookie": "something=1",
+    "keepAlive": true
+}

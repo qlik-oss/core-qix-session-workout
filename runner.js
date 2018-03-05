@@ -200,6 +200,7 @@ async function connect() {
       // sendLog(JSON.stringify(getEnigmaConfig(cookie, GUID)));
 
       const qix = await enigma.create(getEnigmaConfig(cookie, GUID)).open();
+      console.log(qix);
       qix.on('closed', () => { closedSessions += 1; }); // eslint-disable-line no-loop-func
 
       if (DIRECT === 'true') await qix.openDoc(DOCPATH);

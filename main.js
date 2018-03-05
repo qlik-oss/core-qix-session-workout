@@ -5,8 +5,7 @@ const fs = require('fs');
 const yargs = require('yargs');
 const runner = require('./runner');
 const os = require('os');
-const blessed = require('blessed');
-const contrib = require('blessed-contrib');
+const ui = require('./src/ui');
 
 const argv = yargs
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
@@ -23,14 +22,14 @@ const argv = yargs
       },
       gateway: {
         alias: 'g',
-        description: 'Gateway to connect to',
+        description: 'Gateway/Server to connect to',
         default: 'localhost',
         type: 'string',
         requiresArg: true,
       },
       direct: {
         alias: 'd',
-        description: '',
+        description: 'If ws://<gatewway>:9076 should be used direct',
         default: false,
         type: 'boolean',
       },
@@ -49,46 +48,46 @@ const argv = yargs
       },
       interval: {
         alias: 'i',
-        description: '',
+        description: 'How often new sessions should be created',
         default: 60,
         type: 'number',
         requiresArg: true,
       },
       selectionInterval: {
         alias: 's',
-        description: '',
+        description: 'How often selections should be made',
         default: 10000,
         type: 'number',
         requiresArg: true,
       },
       selectionRatio: {
         alias: 'r',
-        description: '',
+        description: 'How many of the sessions should do selections',
         default: 0.1,
         type: 'number',
         requiresArg: true,
       },
       loginUrl: {
         alias: 'l',
-        description: '',
+        description: 'Url to be used for getting cookie',
         default: '/login/local/callback?username=admin&password=password',
         type: 'string',
         requiresArg: true,
       },
       cookie: {
-        description: '',
+        description: 'If predefined cookie should be used',
         default: undefined,
         type: 'string',
         requiresArg: true,
       },
       keepAlive: {
         alias: 'k',
-        description: '',
+        description: 'Keep sessions connected after rampup',
         default: false,
         type: 'boolean',
       },
       objects: {
-        description: '',
+        description: 'Array of objects to be created',
         default: [],
         type: 'array',
       },
@@ -119,91 +118,14 @@ const argv = yargs
 
 argv.objects = JSON.stringify(argv.objects);
 
-const settingsString = `
-{blue-fg}Threads:{/blue-fg} ${argv.threads}
-{blue-fg}Gateway:{/blue-fg} ${argv.gateway}
-{blue-fg}Direct Connect:{/blue-fg} ${argv.direct}
-{blue-fg}Docpath:{/blue-fg} ${argv.docpath}
-{blue-fg}Sessions:{/blue-fg} ${argv.max}
-{blue-fg}Duration:{/blue-fg} ${argv.interval} ms
-{blue-fg}Selection Interval:{/blue-fg} ${argv.selectionInterval / 1000} s 
-{blue-fg}Selection Ratio:{/blue-fg} ${argv.selectionRatio * 100} %
-{blue-fg}Login Url:{/blue-fg} ${argv.loginUrl}
-{blue-fg}Cookie:{/blue-fg} ${argv.cookie}
-{blue-fg}Keepalive:{/blue-fg} ${argv.keepAlive}
-{blue-fg}Objects:{/blue-fg} ${JSON.parse(argv.objects).length}`;
-
-
 const infoArray = new Array(argv.threads).fill([]);
 
 if (cluster.isMaster) {
-  // Blessed UI
-  const main = blessed.screen({ smartCSR: true });
-  const grid = new contrib.grid({ rows: 12, cols: 12, screen: main }); // eslint-disable-line
-
-  const loggerOptions = {
-    top: 'center',
-    left: 'center',
-    width: '50%',
-    height: '50%',
-    border: 'line',
-    label: ' Error logs ',
-    tags: true,
-    keys: true,
-    vi: true,
-    mouse: true,
-    scrollback: 100,
-    scrollbar: {
-      ch: ' ',
-      track: {
-        // bg: 'yellow',
-      },
-      style: {
-        inverse: true,
-      },
-    },
-  };
-
-  const tableOptions = {
-    keys: true,
-    fg: 'white',
-    selectedFg: 'white',
-    selectedBg: 'blue',
-    interactive: false,
-    label: ' Workers ',
-    width: '100%',
-  //   height: '100%',
-    // padding: 1,
-  //   border: { type: 'line', fg: 'cyan' },
-    columnSpacing: 1,
-    columnWidth: [10, 8, 23, 15, 10, 17] };
-
-  const boxOptions = {
-    // border: 'line',
-    label: ' Settings ',
-    // align: 'center',
-    // left: 'center',
-    // top: 'center',
-    tags: true,
-    content: settingsString,
-    // width: 22,
-    // height: 10,
-    // padding: 2,
-  };
-
-  const log = grid.set(0, 0, 6, 12, blessed.log, loggerOptions);
-  const table = grid.set(6, 0, 6, 9, contrib.table, tableOptions);
-  /* const box = */grid.set(6, 9, 6, 3, blessed.box, boxOptions);
-
-  table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Selections', 'Errors', 'Memory Usage (MB)'], data: [] });
-
-  main.key('C-c', () => process.exit(0));
-  main.render();
-
-  // Node cluster
   if (argv.threads === -1) {
     argv.threads = os.cpus().length;
   }
+
+  const UI = ui.init(argv);
 
   for (let i = 0; i < argv.threads; i += 1) {
     const worker = cluster.fork(argv);
@@ -212,20 +134,19 @@ if (cluster.isMaster) {
       msg = JSON.parse(msg); // eslint-disable-line no-param-reassign
       if (msg.type === 'INFO') {
         infoArray[msg.id - 1] = msg.msg;
-        table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Selections', 'Errors', 'Memory Usage (MB)'], data: infoArray });
-        main.render();
+        UI.table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Selections', 'Errors', 'Memory Usage (MB)'], data: infoArray });
+        UI.main.render();
       } else if (msg.type === 'LOG') {
-        log.log(`Worker ${msg.id} reported: ${msg.msg}`);
+        UI.log.log(`Worker ${msg.id} reported: ${msg.msg}`);
       }
     });
   }
 
   cluster.on('exit', (worker, code, signal) => {
     if (code !== 0) {
-      log.log(' >>> Worker %d died (%s)', worker.process.pid, signal || code);
+      UI.log.log(' >>> Worker %d died (%s)', worker.process.pid, signal || code);
     }
   });
-  // =================================
 } else {
   runner.start(cluster.worker.id);
 }

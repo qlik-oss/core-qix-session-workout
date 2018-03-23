@@ -92,6 +92,11 @@ const argv = yargs
         default: [],
         type: 'array',
       },
+      secure: {
+        description: 'wheather to use wss or ws',
+        default: true,
+        type: 'boolean',
+      },
       config: {
         description: 'Path to config file',
         type: 'string',

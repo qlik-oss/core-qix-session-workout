@@ -3,6 +3,7 @@
     "threads": 1,
     "gateway": "localhost",
     "direct": true,
+    "secure" : false,
     "docpath": "drugcases.qvf",
     "objects":[
         ["Manufacturer Code Name", "Count(Drug_caseID)"],

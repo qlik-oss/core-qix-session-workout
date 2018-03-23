@@ -1,0 +1,13 @@
+{
+    "max": 50,
+    "threads": 1,
+    "gateway": "104.155.12.182",
+    "docpath": "/app/session-doc",
+    "direct": false,
+    "cookie": "something=1",
+    "keepAlive": true,
+    "selectionRatio": 0,
+    "selectionInterval": 3600000,
+    "interval": 10000,
+    "secure": false
+}

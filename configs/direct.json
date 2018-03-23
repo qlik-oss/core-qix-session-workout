@@ -6,5 +6,6 @@
     "docpath": "drugcases.qvf",
     "objects":[],
     "cookie": "something=1",
-    "keepAlive": true
+    "keepAlive": true,
+    "secure": false
 }

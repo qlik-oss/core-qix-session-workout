@@ -11,11 +11,11 @@ const argv = yargs
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
     .help('help').alias('help', 'h')
     .version(false)
-    .wrap(Math.min(120, yargs.terminalWidth()))
+    .wrap(Math.min(140, yargs.terminalWidth()))
     .options({
       threads: {
         alias: 't',
-        description: 'Number of threads to run in parallell/n Setting to `-1` will use the nomber of cores',
+        description: 'Number of threads to run in parallell/n Setting to `-1` will use the number of cores',
         default: 1,
         type: 'number',
         requiresArg: true,
@@ -29,7 +29,7 @@ const argv = yargs
       },
       direct: {
         alias: 'd',
-        description: 'If ws://<gatewway>:9076 should be used direct',
+        description: 'Opens the app directly on the engine',
         default: false,
         type: 'boolean',
       },
@@ -55,41 +55,46 @@ const argv = yargs
       },
       selectionInterval: {
         alias: 's',
-        description: 'How often selections should be made',
+        description: 'How often selections should be done',
         default: 10000,
         type: 'number',
         requiresArg: true,
       },
       selectionRatio: {
         alias: 'r',
-        description: 'How many of the sessions should do selections',
+        description: 'The amount of sessions the should do selections (in %)',
         default: 0.1,
         type: 'number',
         requiresArg: true,
       },
       loginUrl: {
         alias: 'l',
-        description: 'Url to be used for getting cookie',
+        description: 'If a cookie should be fetched and used in ws header',
         default: '/login/local/callback?username=admin&password=password',
         type: 'string',
         requiresArg: true,
       },
       cookie: {
-        description: 'If predefined cookie should be used',
+        description: 'Fixed cookie to be used in ws header',
         default: undefined,
         type: 'string',
         requiresArg: true,
       },
       keepAlive: {
         alias: 'k',
-        description: 'Keep sessions connected after rampup',
+        description: 'Don´t close sessions after ramp up',
         default: false,
         type: 'boolean',
       },
       objects: {
-        description: 'Array of objects to be created',
+        description: 'Defined objects to create after session create',
         default: [],
         type: 'array',
+      },
+      secure: {
+        description: 'Wheather to use wss or ws',
+        default: true,
+        type: 'boolean',
       },
       config: {
         description: 'Path to config file',

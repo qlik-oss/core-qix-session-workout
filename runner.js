@@ -18,6 +18,7 @@ const LOGIN_URL = process.env.loginUrl;
 const COOKIE = process.env.cookie;
 const KEEP_ALIVE = process.env.keepAlive;
 let OBJECTS = process.env.objects;
+const SECURE = process.env.secure;
 
 let WORKER_ID;
 const sessions = [];
@@ -75,8 +76,9 @@ async function getLoginCookie() {
 
 function getEnigmaConfig(cookie, guid) {
   const JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJSb2xlIjoiQWRtaW4iLCJpYXQiOjE1MTkxNTg2MzJ9.035tIIGipahbMGcXHzsPVZZUT3HilsaJ6ou0CMIegTc';
+  const websocketUrlPart = SECURE ? 'wss' : 'ws';
   return {
-    url: (DIRECT === 'true') ? `ws://${GATEWAY}:9076/app/engineData/ttl/60` : `wss://${GATEWAY}${DOCPATH}`,
+    url: (DIRECT === 'true') ? `${websocketUrlPart}://${GATEWAY}:9076/app/engineData/ttl/60` : `${websocketUrlPart}://${GATEWAY}${DOCPATH}`,
     schema: qixSchema,
     createSocket: url => new WebSocket(url, {
       rejectUnauthorized: false,

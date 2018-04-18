@@ -1,0 +1,18 @@
+{
+    "max": 400,
+    "threads": 4,
+    "gateway": "35.197.201.14",
+    "docpath": "/app/doc/happiness.qvf",
+    "objects":[
+      ["Country", "Avg([Happy Planet Index])"]
+    ],
+    "direct": false,
+    "cookie": "something=1",
+    "keepAlive": true,
+    "selectionRatio": 0,
+    "selectionInterval": 3600000,
+    "interval": 1000,
+    "secure": false,
+    "sessionLength":50000,
+    "triangular": true
+}

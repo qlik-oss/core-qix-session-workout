@@ -1,7 +1,7 @@
 {
     "max": 50,
     "threads": 1,
-    "gateway": "35.197.201.14",
+    "gateway": "xx.xx.xx.xx",
     "docpath": "/app/doc/happiness.qvf",
     "objects":[
       ["Country", "Avg([Happy Planet Index])"]

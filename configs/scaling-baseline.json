@@ -1,5 +1,5 @@
 {
-    "max": 50,
+    "max": 2000000,
     "threads": 1,
     "gateway": "xx.xx.xx.xx",
     "docpath": "/app/doc/happiness.qvf",
@@ -11,6 +11,8 @@
     "keepAlive": true,
     "selectionRatio": 0,
     "selectionInterval": 3600000,
-    "interval": 10000,
-    "secure": false
+    "interval": 1000,
+    "secure": false,
+    "sessionLength":50000,
+    "triangular": false
 }

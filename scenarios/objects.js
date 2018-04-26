@@ -16,7 +16,7 @@ function sessionObjectDef(dimension, measure) {
       qInterColumnSortOrder: [1, 0],
       qInitialDataFetch: [{
         qTop: 0,
-        qHeight: 20,
+        qHeight: 200,
         qLeft: 0,
         qWidth: 17,
       }],
@@ -44,9 +44,8 @@ exports.createObjects = async (session, OBJECTS) => {
   const app = await session.getActiveDoc();
 
   await Promise.all(OBJECTS.map(async (object) => {
-    const qInfo = await app.createSessionObject(sessionObjectDef(object[0], object[1]))
+    await app.createSessionObject(sessionObjectDef(object[0], object[1]))
       .then(x => x.getLayout())
       .then(layout => ({ qInfo: layout.qInfo }));
-    console.log(qInfo);
   }));
 };

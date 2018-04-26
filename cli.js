@@ -103,6 +103,21 @@ const argv = yargs
         default: null,
         alias: 'c',
       },
+      sessionLength: {
+        alias: 'sl',
+        description: 'The length of each session (in ms)',
+        default: 1000000000,
+        type: 'number',
+        requiresArg: false,
+      },
+      triangular: {
+        alias: 'tr',
+        description: 'If set to true the traffic speed will slowly increase to the ' +
+        'maximum rate (the specified interval) and thereafter slowly decrease',
+        default: false,
+        type: 'boolean',
+        requiresArg: false,
+      },
     })
     .config('config', (configPath) => {
       if (configPath === null) {

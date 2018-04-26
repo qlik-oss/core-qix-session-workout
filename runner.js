@@ -14,6 +14,7 @@ const MAX_SESSIONS = process.env.max;
 const INTERVAL = process.env.interval;
 const SELECTION_INTERVAL = process.env.selectionInterval;
 const SELECTION_RATIO = process.env.selectionRatio;
+const SESSION_LENGTH = process.env.sessionLength;
 const LOGIN_URL = process.env.loginUrl;
 const COOKIE = process.env.cookie;
 const KEEP_ALIVE = process.env.keepAlive;
@@ -76,9 +77,11 @@ async function getLoginCookie() {
 
 function getEnigmaConfig(cookie, guid) {
   const JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJSb2xlIjoiQWRtaW4iLCJpYXQiOjE1MTkxNTg2MzJ9.035tIIGipahbMGcXHzsPVZZUT3HilsaJ6ou0CMIegTc';
+
+
   const websocketUrlPart = (SECURE === 'true') ? 'wss' : 'ws';
   return {
-    url: (DIRECT === 'true') ? `${websocketUrlPart}://${GATEWAY}:9076/app/engineData/ttl/60` : `${websocketUrlPart}://${GATEWAY}${DOCPATH}`,
+    url: (DIRECT === 'true') ? `${websocketUrlPart}://${GATEWAY}:9076/app/engineData` : `${websocketUrlPart}://${GATEWAY}${DOCPATH}`,
     schema: qixSchema,
     createSocket: url => new WebSocket(url, {
       rejectUnauthorized: false,
@@ -189,11 +192,37 @@ async function makeRandomSelection() {
   sendInfo();
 }
 
+function getTriangularWaitTime(meanInterval, index, max) {
+  // For mean interval 200 ms, max 20 sessions the rate and corresponding interval would be:
+  // Rate: 1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1
+  // Interval: 1000 500 333 250 166 ... 100 .... 166 255 333 500 1000
+
+  const peakRate = 1000 / meanInterval; // Calculate the peak rate
+
+  const peakIndex = Math.floor(max / 2); // Peak index is in the middle
+  let rangePercentage;  // Distance from the peak in percentage of all the way to the edges
+
+  if (index < peakIndex) { // Before peak
+    rangePercentage = index / peakIndex;
+  } else { // After peak
+    rangePercentage = (max - index) / (max - peakIndex);
+  }
+
+  const speedPercentage = (rangePercentage + 0.1) / 1.1;
+  const rate = speedPercentage * peakRate; // The rate at the current index
+  const interval = 1000 / rate; // Invert to get interval
+  return interval;
+}
+
 async function connect() {
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   for (let i = 1; i <= MAX_SESSIONS; i += 1) {
-    await wait(INTERVAL);
+    if (process.env.triangular === 'true') {
+      await wait(getTriangularWaitTime(INTERVAL, i, MAX_SESSIONS));
+    } else {
+      await wait(INTERVAL);
+    }
 
     try {
       const cookie = (COOKIE === 'undefined') ? await getLoginCookie() : COOKIE;
@@ -203,6 +232,9 @@ async function connect() {
 
       const qix = await enigma.create(getEnigmaConfig(cookie, GUID)).open();
       qix.on('closed', () => { closedSessions += 1; }); // eslint-disable-line no-loop-func
+
+      // Add the current time to the session so we know when to close it
+      qix.workoutStartTime = new Date().getTime();
 
       if (DIRECT === 'true') await qix.openDoc(DOCPATH);
 
@@ -219,6 +251,20 @@ async function connect() {
     } catch (e) {
       sendLog('Error occured while connecting: ', e);
       errorCount += 1;
+    }
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+async function closeOldSessions() {
+  const now = new Date().getTime();
+  // eslint-disable-next-line no-restricted-syntax
+  for (const qix of sessions) {
+    if (qix.workoutStartTime < now - SESSION_LENGTH) {
+      /* eslint-disable no-await-in-loop */
+      await qix.session.close();
+      await sleep(1);
+      /* eslint-enable no-await-in-loop */
     }
   }
 }
@@ -246,12 +292,26 @@ exports.start = async (workerNr) => {
     makeRandomSelection(sessions);
   }, SELECTION_INTERVAL);
 
+  let closeSessionsFn;
+  if (SESSION_LENGTH > 0) {
+    closeSessionsFn = setInterval(() => {
+      closeOldSessions(sessions);
+    }, 250);
+  }
   await connect(sessions);
+
 
   if (KEEP_ALIVE === 'false') {
     clearInterval(selectionsIntevalFn);
+    if (closeSessionsFn) {
+      clearInterval(closeSessionsFn);
+    }
     await disconnect(sessions);
     sendInfo();
     process.exit();
+  } else {
+    setInterval(() => {
+      sendInfo();
+    }, 1000);
   }
 };

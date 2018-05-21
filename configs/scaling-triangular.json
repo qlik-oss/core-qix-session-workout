@@ -1,10 +1,10 @@
 {
-    "max": 400,
+    "max": 300,
     "threads": 4,
     "gateway": "xx.xx.xx.xx",
-    "docpath": "/app/doc/happiness.qvf",
+    "docpath": "/app/doc/Shared-Africa-Urbanization.qvf",
     "objects":[
-      ["Country", "Avg([Happy Planet Index])"]
+      ["Country Name", "Avg([Life Expectancy (Years)])"]
     ],
     "direct": false,
     "cookie": "something=1",

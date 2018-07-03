@@ -200,7 +200,7 @@ function getTriangularWaitTime(meanInterval, index, max) {
   const peakRate = 1000 / meanInterval; // Calculate the peak rate
 
   const peakIndex = Math.floor(max / 2); // Peak index is in the middle
-  let rangePercentage;  // Distance from the peak in percentage of all the way to the edges
+  let rangePercentage; // Distance from the peak in percentage of all the way to the edges
 
   if (index < peakIndex) { // Before peak
     rangePercentage = index / peakIndex;

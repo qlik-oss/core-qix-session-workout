@@ -3,12 +3,12 @@
 const cluster = require('cluster');
 const fs = require('fs');
 const yargs = require('yargs');
-const runner = require('./runner');
 const os = require('os');
 const blessed = require('blessed');
 const contrib = require('blessed-contrib');
+const runner = require('./runner');
 
-const argv = yargs
+const argv = yargs // eslint-disable-line
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
   .help('help').alias('help', 'h')
   .version(false)
@@ -112,8 +112,8 @@ const argv = yargs
     },
     triangular: {
       alias: 'tr',
-      description: 'If set to true the traffic speed will slowly increase to the ' +
-        'maximum rate (the specified interval) and thereafter slowly decrease',
+      description: 'If set to true the traffic speed will slowly increase to the '
+        + 'maximum rate (the specified interval) and thereafter slowly decrease',
       default: false,
       type: 'boolean',
       requiresArg: false,
@@ -196,7 +196,8 @@ if (cluster.isMaster) {
     // padding: 1,
     //   border: { type: 'line', fg: 'cyan' },
     columnSpacing: 1,
-    columnWidth: [10, 8, 23, 15, 10, 17] };
+    columnWidth: [10, 8, 23, 15, 10, 17],
+  };
 
   const boxOptions = {
     // border: 'line',

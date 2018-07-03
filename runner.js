@@ -3,8 +3,8 @@ const WebSocket = require('ws');
 const qixSchema = require('enigma.js/schemas/12.20.0.json');
 const request = require('request');
 const seedrandom = require('seedrandom');
-const scenario = require('./scenarios/objects');
 const os = require('os');
+const scenario = require('./scenarios/objects');
 
 const MAX_RETRIES = 3;
 const GATEWAY = process.env.gateway;
@@ -142,9 +142,12 @@ async function doRandomSelection(app, fieldName) {
           qFieldLabels: [fieldName],
           qFieldDefs: [fieldName],
         },
-        qInitialDataFetch: [{ qTop: 0, qLeft: 0, qWidth: 0, qHeight: 10 }],
+        qInitialDataFetch: [{
+          qTop: 0, qLeft: 0, qWidth: 0, qHeight: 10,
+        }],
       },
-    });
+    },
+  );
 
   try {
     const sessionObjectLayout = await sessionObject.getLayout();

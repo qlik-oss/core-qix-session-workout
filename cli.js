@@ -10,132 +10,132 @@ const contrib = require('blessed-contrib');
 
 const argv = yargs
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
-    .help('help').alias('help', 'h')
-    .version(false)
-    .wrap(Math.min(140, yargs.terminalWidth()))
-    .options({
-      threads: {
-        alias: 't',
-        description: 'Number of threads to run in parallell/n Setting to `-1` will use the number of cores',
-        default: 1,
-        type: 'number',
-        requiresArg: true,
-      },
-      gateway: {
-        alias: 'g',
-        description: 'Gateway to connect to',
-        default: 'localhost',
-        type: 'string',
-        requiresArg: true,
-      },
-      direct: {
-        alias: 'd',
-        description: 'Opens the app directly on the engine',
-        default: false,
-        type: 'boolean',
-      },
-      docpath: {
-        description: 'Path to document',
-        default: '/doc/doc/drugcases.qvf',
-        type: 'string',
-        requiresArg: true,
-      },
-      max: {
-        alias: 'm',
-        description: 'Max number of sessions',
-        type: 'number',
-        // required: true,
-        requiresArg: true,
-      },
-      interval: {
-        alias: 'i',
-        description: 'How often new sessions should be created',
-        default: 60,
-        type: 'number',
-        requiresArg: true,
-      },
-      selectionInterval: {
-        alias: 's',
-        description: 'How often selections should be done',
-        default: 10000,
-        type: 'number',
-        requiresArg: true,
-      },
-      selectionRatio: {
-        alias: 'r',
-        description: 'The amount of sessions the should do selections (in %)',
-        default: 0.1,
-        type: 'number',
-        requiresArg: true,
-      },
-      loginUrl: {
-        alias: 'l',
-        description: 'If a cookie should be fetched and used in ws header',
-        default: '/login/local/callback?username=admin&password=password',
-        type: 'string',
-        requiresArg: true,
-      },
-      cookie: {
-        description: 'Fixed cookie to be used in ws header',
-        default: undefined,
-        type: 'string',
-        requiresArg: true,
-      },
-      keepAlive: {
-        alias: 'k',
-        description: 'Don´t close sessions after ramp up',
-        default: false,
-        type: 'boolean',
-      },
-      objects: {
-        description: 'Defined objects to create after session create',
-        default: [],
-        type: 'array',
-      },
-      secure: {
-        description: 'Wheather to use wss or ws',
-        default: true,
-        type: 'boolean',
-      },
-      config: {
-        description: 'Path to config file',
-        type: 'string',
-        default: null,
-        alias: 'c',
-      },
-      sessionLength: {
-        alias: 'sl',
-        description: 'The length of each session (in ms)',
-        default: 1000000000,
-        type: 'number',
-        requiresArg: false,
-      },
-      triangular: {
-        alias: 'tr',
-        description: 'If set to true the traffic speed will slowly increase to the ' +
+  .help('help').alias('help', 'h')
+  .version(false)
+  .wrap(Math.min(140, yargs.terminalWidth()))
+  .options({
+    threads: {
+      alias: 't',
+      description: 'Number of threads to run in parallell/n Setting to `-1` will use the number of cores',
+      default: 1,
+      type: 'number',
+      requiresArg: true,
+    },
+    gateway: {
+      alias: 'g',
+      description: 'Gateway to connect to',
+      default: 'localhost',
+      type: 'string',
+      requiresArg: true,
+    },
+    direct: {
+      alias: 'd',
+      description: 'Opens the app directly on the engine',
+      default: false,
+      type: 'boolean',
+    },
+    docpath: {
+      description: 'Path to document',
+      default: '/doc/doc/drugcases.qvf',
+      type: 'string',
+      requiresArg: true,
+    },
+    max: {
+      alias: 'm',
+      description: 'Max number of sessions',
+      type: 'number',
+      // required: true,
+      requiresArg: true,
+    },
+    interval: {
+      alias: 'i',
+      description: 'How often new sessions should be created',
+      default: 60,
+      type: 'number',
+      requiresArg: true,
+    },
+    selectionInterval: {
+      alias: 's',
+      description: 'How often selections should be done',
+      default: 10000,
+      type: 'number',
+      requiresArg: true,
+    },
+    selectionRatio: {
+      alias: 'r',
+      description: 'The amount of sessions the should do selections (in %)',
+      default: 0.1,
+      type: 'number',
+      requiresArg: true,
+    },
+    loginUrl: {
+      alias: 'l',
+      description: 'If a cookie should be fetched and used in ws header',
+      default: '/login/local/callback?username=admin&password=password',
+      type: 'string',
+      requiresArg: true,
+    },
+    cookie: {
+      description: 'Fixed cookie to be used in ws header',
+      default: undefined,
+      type: 'string',
+      requiresArg: true,
+    },
+    keepAlive: {
+      alias: 'k',
+      description: 'Don´t close sessions after ramp up',
+      default: false,
+      type: 'boolean',
+    },
+    objects: {
+      description: 'Defined objects to create after session create',
+      default: [],
+      type: 'array',
+    },
+    secure: {
+      description: 'Wheather to use wss or ws',
+      default: true,
+      type: 'boolean',
+    },
+    config: {
+      description: 'Path to config file',
+      type: 'string',
+      default: null,
+      alias: 'c',
+    },
+    sessionLength: {
+      alias: 'sl',
+      description: 'The length of each session (in ms)',
+      default: 1000000000,
+      type: 'number',
+      requiresArg: false,
+    },
+    triangular: {
+      alias: 'tr',
+      description: 'If set to true the traffic speed will slowly increase to the ' +
         'maximum rate (the specified interval) and thereafter slowly decrease',
-        default: false,
-        type: 'boolean',
-        requiresArg: false,
-      },
-    })
-    .config('config', (configPath) => {
-      if (configPath === null) {
-        return {};
-      }
-      if (!fs.existsSync(configPath)) {
-        throw new Error(`Config ${configPath} not found`);
-      }
-      let config = {};
+      default: false,
+      type: 'boolean',
+      requiresArg: false,
+    },
+  })
+  .config('config', (configPath) => {
+    if (configPath === null) {
+      return {};
+    }
+    if (!fs.existsSync(configPath)) {
+      throw new Error(`Config ${configPath} not found`);
+    }
+    let config = {};
       const foundConfig = require(configPath); // eslint-disable-line
-      if (typeof foundConfig === 'function') {
-        config = Object.assign({}, foundConfig());
-      } else {
-        config = Object.assign({}, foundConfig);
-      }
-      return config;
-    })
-    .argv;
+    if (typeof foundConfig === 'function') {
+      config = Object.assign({}, foundConfig());
+    } else {
+      config = Object.assign({}, foundConfig);
+    }
+    return config;
+  })
+  .argv;
 
 argv.objects = JSON.stringify(argv.objects);
 
@@ -192,9 +192,9 @@ if (cluster.isMaster) {
     interactive: false,
     label: ' Workers ',
     width: '100%',
-  //   height: '100%',
+    //   height: '100%',
     // padding: 1,
-  //   border: { type: 'line', fg: 'cyan' },
+    //   border: { type: 'line', fg: 'cyan' },
     columnSpacing: 1,
     columnWidth: [10, 8, 23, 15, 10, 17] };
 

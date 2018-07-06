@@ -3,7 +3,7 @@
     "threads": 10,
     "interval": 0,
     "selectionRatio": 0,
-    "gateway": "52.49.179.2",
+    "gateway": "xx.xx.xx.xx",
     "objects":[],
     "keepAlive": true,
     "direct": true,

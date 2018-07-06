@@ -1,0 +1,18 @@
+{
+    "max": 300,
+    "threads": 4,
+    "gateway": "xx.xx.xx.xx",
+    "docpath": "/app/doc/Shared-Africa-Urbanization.qvf",
+    "objects":[
+      ["Country Name", "Avg([Life Expectancy (Years)])"]
+    ],
+    "direct": false,
+    "cookie": "something=1",
+    "keepAlive": true,
+    "selectionRatio": 0,
+    "selectionInterval": 3600000,
+    "interval": 1000,
+    "secure": false,
+    "sessionLength":50000,
+    "triangular": true
+}

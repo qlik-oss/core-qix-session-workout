@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   qix-engine:
-    image: qlikea/engine:12.156.0
+    image: qlikcore/engine:12.193.0
     ports:
       - "9076:9076"
       - "9090:9090"

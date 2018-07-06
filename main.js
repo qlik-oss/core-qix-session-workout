@@ -3,8 +3,8 @@
 const cluster = require('cluster');
 const fs = require('fs');
 const yargs = require('yargs');
-const runner = require('./runner');
 const os = require('os');
+const runner = require('./runner');
 const ui = require('./src/ui');
 
 const argv = yargs // eslint-disable-line

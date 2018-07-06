@@ -30,7 +30,8 @@ const tableOptions = {
   label: ' Workers ',
   width: '100%',
   columnSpacing: 1,
-  columnWidth: [10, 8, 23, 15, 10, 17] };
+  columnWidth: [10, 8, 23, 15, 10, 17],
+};
 
 function boxOptions(argv) {
   return {
@@ -68,7 +69,9 @@ const ui = {
     main.key('C-c', () => process.exit(0));
     main.render();
 
-    return ({ log, table, box, main });
+    return ({
+      log, table, box, main,
+    });
   },
 };
 

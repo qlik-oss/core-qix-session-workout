@@ -1,6 +1,6 @@
 {
-    "max": 2,
-    "threads": 1,
+    "max": 5,
+    "threads": 10,
     "gateway": "localhost",
     "direct": true,
     "secure" : false,

@@ -22,5 +22,6 @@
     "keepAlive": true,
     "headers": {
       "Authorization": "Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJSb2xlIjoiQWRtaW4iLCJpYXQiOjE1MTkxNTg2MzJ9.035tIIGipahbMGcXHzsPVZZUT3HilsaJ6ou0CMIegTc"
-    }
+    },
+    "loginUrl": "/login/local/callback?username=admin&password=password"
 }

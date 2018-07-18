@@ -43,14 +43,14 @@ function boxOptions(argv) {
     scrollable: true,
     content: `{blue-fg}Threads:{/blue-fg} ${argv.threads}
 {blue-fg}Gateway:{/blue-fg} ${argv.gateway}
+{blue-fg}Headers:{/blue-fg} ${argv.headers}
 {blue-fg}Direct Connect:{/blue-fg} ${argv.direct}
 {blue-fg}Docpath:{/blue-fg} ${argv.docpath}
 {blue-fg}Sessions:{/blue-fg} ${argv.max}
 {blue-fg}Duration:{/blue-fg} ${argv.interval} ms
-{blue-fg}Selection Interval:{/blue-fg} ${argv.selectionInterval / 1000} s 
+{blue-fg}Selection Interval:{/blue-fg} ${argv.selectionInterval / 1000} s
 {blue-fg}Selection Ratio:{/blue-fg} ${argv.selectionRatio * 100} %
 {blue-fg}Login Url:{/blue-fg} ${argv.loginUrl}
-{blue-fg}Cookie:{/blue-fg} ${argv.cookie}
 {blue-fg}Keepalive:{/blue-fg} ${argv.keepAlive}
 {blue-fg}Objects:{/blue-fg} ${JSON.parse(argv.objects).length}`,
   };

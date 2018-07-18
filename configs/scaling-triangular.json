@@ -7,7 +7,6 @@
       ["Country Name", "Avg([Life Expectancy (Years)])"]
     ],
     "direct": false,
-    "cookie": "something=1",
     "keepAlive": true,
     "selectionRatio": 0,
     "selectionInterval": 3600000,

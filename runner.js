@@ -16,10 +16,10 @@ const SELECTION_INTERVAL = process.env.selectionInterval;
 const SELECTION_RATIO = process.env.selectionRatio;
 const SESSION_LENGTH = process.env.sessionLength;
 const LOGIN_URL = process.env.loginUrl;
-const COOKIE = process.env.cookie;
 const KEEP_ALIVE = process.env.keepAlive;
 let OBJECTS = process.env.objects;
 const SECURE = process.env.secure;
+const HEADERS = process.env.headers;
 
 let WORKER_ID;
 const sessions = [];
@@ -35,9 +35,7 @@ function generateGUID() {
     return v.toString(16);
   });
 
-  // sendLog(GUID);
   return GUID;
-
   /* eslint-enable no-bitwise */
 }
 
@@ -75,24 +73,15 @@ async function getLoginCookie() {
   });
 }
 
-function getEnigmaConfig(cookie, guid) {
-  const JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJSb2xlIjoiQWRtaW4iLCJpYXQiOjE1MTkxNTg2MzJ9.035tIIGipahbMGcXHzsPVZZUT3HilsaJ6ou0CMIegTc';
-
-
+function getEnigmaConfig(headers) {
   const websocketUrlPart = (SECURE === 'true') ? 'wss' : 'ws';
+
   return {
     url: (DIRECT === 'true') ? `${websocketUrlPart}://${GATEWAY}:9076/app/engineData` : `${websocketUrlPart}://${GATEWAY}${DOCPATH}`,
     schema: qixSchema,
     createSocket: url => new WebSocket(url, {
       rejectUnauthorized: false,
-      // headers: {
-      //   Cookie: cookie,
-      //   'X-Qlik-Session': generateGUID(),
-      // },
-      headers: {
-        Authorization: `Bearer ${JWT}`,
-        'X-Qlik-Session': (guid === undefined) ? generateGUID() : guid,
-      },
+      headers,
     }),
     responseInterceptors: [{
       onRejected: function retryAbortedError(sessionReference, qixRequest, error) {
@@ -228,22 +217,22 @@ async function connect() {
     }
 
     try {
-      const cookie = (COOKIE === 'undefined') ? await getLoginCookie() : COOKIE;
+      // Set headers to be used for the connection
+      const headers = HEADERS ? JSON.parse(HEADERS) : {};
+      headers['X-Qlik-Session'] = generateGUID();
 
-      const GUID = generateGUID();
-      // sendLog(JSON.stringify(getEnigmaConfig(cookie, GUID)));
+      // Only fetch login cookie if a loginUrl was provided
+      if (LOGIN_URL) {
+        headers.Cookie = await getLoginCookie();
+      }
 
-      const qix = await enigma.create(getEnigmaConfig(cookie, GUID)).open();
+      const qix = await enigma.create(getEnigmaConfig(headers)).open();
       qix.on('closed', () => { closedSessions += 1; }); // eslint-disable-line no-loop-func
 
       // Add the current time to the session so we know when to close it
       qix.workoutStartTime = new Date().getTime();
 
       if (DIRECT === 'true') await qix.openDoc(DOCPATH);
-
-      // await qix.session.close();
-      // qix = await enigma.create(getEnigmaConfig(cookie, GUID)).open();
-      // await qix.openDoc(DOCPATH);
 
       sessions.push(qix);
       sendInfo();

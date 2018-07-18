@@ -19,6 +19,9 @@
         ["Reaction Therapy Stop", "Count(Demographic_Caseid)"],
         ["Patient Age Group", "Count({<[Drug Role Event] = {\"Primary Suspect Drug\"},[Medical Description Reaction] = {\"Death\"} >}Demographic_Caseid)"]
     ],
-    "cookie": "something=1",
-    "keepAlive": true
+    "keepAlive": true,
+    "headers": {
+      "Authorization": "Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJSb2xlIjoiQWRtaW4iLCJpYXQiOjE1MTkxNTg2MzJ9.035tIIGipahbMGcXHzsPVZZUT3HilsaJ6ou0CMIegTc"
+    },
+    "loginUrl": "/login/local/callback?username=admin&password=password"
 }

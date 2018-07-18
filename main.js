@@ -35,7 +35,6 @@ const argv = yargs // eslint-disable-line
     },
     docpath: {
       description: 'Path to document',
-      default: '/doc/doc/drugcases.qvf',
       type: 'string',
       requiresArg: true,
     },
@@ -43,7 +42,6 @@ const argv = yargs // eslint-disable-line
       alias: 'm',
       description: 'Max number of sessions',
       type: 'number',
-      // required: true,
       requiresArg: true,
     },
     interval: {
@@ -70,15 +68,7 @@ const argv = yargs // eslint-disable-line
     loginUrl: {
       alias: 'l',
       description: 'If a cookie should be fetched and used in ws header',
-      default: '/login/local/callback?username=admin&password=password',
       type: 'string',
-      requiresArg: true,
-    },
-    cookie: {
-      description: 'Fixed cookie to be used in ws header',
-      default: undefined,
-      type: 'string',
-      requiresArg: true,
     },
     keepAlive: {
       alias: 'k',
@@ -99,7 +89,6 @@ const argv = yargs // eslint-disable-line
     config: {
       description: 'Path to config file',
       type: 'string',
-      default: null,
       alias: 'c',
     },
     sessionLength: {
@@ -116,6 +105,10 @@ const argv = yargs // eslint-disable-line
       default: false,
       type: 'boolean',
       requiresArg: false,
+    },
+    headers: {
+      description: 'Headers that should be used when connecting',
+      type: 'string',
     },
   })
   .config('config', (configPath) => {
@@ -137,6 +130,10 @@ const argv = yargs // eslint-disable-line
   .argv;
 
 argv.objects = JSON.stringify(argv.objects);
+
+if (argv.headers) {
+  argv.headers = JSON.stringify(argv.headers);
+}
 
 const infoArray = new Array(argv.threads).fill([]);
 

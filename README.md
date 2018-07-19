@@ -24,7 +24,7 @@ Options:
   --objects                Defined objects to create after session create                                              [array] [default: []]
   --secure                 Wheather to use wss or ws                                                               [boolean] [default: true]
   --seed                   What seed to use for the random selections, if none is provided it will use a random GUID.
-                           The seed for each thread will be this string and the thread number                       [string] [default: null]
+                           The seed for each thread will be this string and the thread number              [string] [default: a random GUID]
   --config, -c             Path to JSON config file                                                                 [string] [default: null]
   ```
 

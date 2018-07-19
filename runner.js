@@ -3,7 +3,6 @@ const WebSocket = require('ws');
 const qixSchema = require('enigma.js/schemas/12.20.0.json');
 const request = require('request');
 const seedrandom = require('seedrandom');
-const os = require('os');
 const scenario = require('./scenarios/objects');
 
 const MAX_RETRIES = 3;
@@ -20,6 +19,7 @@ const KEEP_ALIVE = process.env.keepAlive;
 let OBJECTS = process.env.objects;
 const SECURE = process.env.secure;
 const HEADERS = process.env.headers;
+const SEED = process.env.seed;
 
 let WORKER_ID;
 const sessions = [];
@@ -27,7 +27,7 @@ let closedSessions = 0;
 let SELECTIONS = 0;
 let errorCount = 0;
 
-function generateGUID() {
+exports.generateGUID = function generateGUID() {
   /* eslint-disable no-bitwise */
   const GUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
@@ -37,7 +37,7 @@ function generateGUID() {
 
   return GUID;
   /* eslint-enable no-bitwise */
-}
+};
 
 function sendInfo() {
   const json = {
@@ -219,7 +219,7 @@ async function connect() {
     try {
       // Set headers to be used for the connection
       const headers = HEADERS ? JSON.parse(HEADERS) : {};
-      headers['X-Qlik-Session'] = generateGUID();
+      headers['X-Qlik-Session'] = exports.generateGUID();
 
       // Only fetch login cookie if a loginUrl was provided
       if (LOGIN_URL) {
@@ -274,8 +274,7 @@ async function disconnect() {
 }
 
 exports.start = async (workerNr) => {
-  seedrandom(`${os.hostname()}_${workerNr}`, { global: true });
-
+  seedrandom(`${SEED}_${workerNr}`, { global: true });
   WORKER_ID = workerNr;
   OBJECTS = JSON.parse(OBJECTS);
   sendInfo(); // Initial information send

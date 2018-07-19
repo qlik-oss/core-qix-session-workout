@@ -52,6 +52,7 @@ function boxOptions(argv) {
 {blue-fg}Selection Ratio:{/blue-fg} ${argv.selectionRatio * 100} %
 {blue-fg}Login Url:{/blue-fg} ${argv.loginUrl}
 {blue-fg}Keepalive:{/blue-fg} ${argv.keepAlive}
+{blue-fg}Seed:{/blue-fg} ${argv.seed}
 {blue-fg}Objects:{/blue-fg} ${JSON.parse(argv.objects).length}`,
   };
 }

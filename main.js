@@ -4,8 +4,11 @@ const cluster = require('cluster');
 const fs = require('fs');
 const yargs = require('yargs');
 const os = require('os');
-const runner = require('./runner');
+const path = require('path');
+const runner = require('./src/runner');
 const ui = require('./src/ui');
+
+let foundConfig;
 
 const argv = yargs // eslint-disable-line
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
@@ -18,24 +21,6 @@ const argv = yargs // eslint-disable-line
       description: 'Number of threads to run in parallell/n Setting to `-1` will use the number of cores',
       default: 1,
       type: 'number',
-      requiresArg: true,
-    },
-    gateway: {
-      alias: 'g',
-      description: 'Gateway/Server to connect to',
-      default: 'localhost',
-      type: 'string',
-      requiresArg: true,
-    },
-    direct: {
-      alias: 'd',
-      description: 'Opens the app directly on the engine',
-      default: false,
-      type: 'boolean',
-    },
-    docpath: {
-      description: 'Path to document',
-      type: 'string',
       requiresArg: true,
     },
     max: {
@@ -51,24 +36,17 @@ const argv = yargs // eslint-disable-line
       type: 'number',
       requiresArg: true,
     },
-    selectionInterval: {
-      alias: 's',
-      description: 'How often selections should be done',
+    interactionInterval: {
+      description: 'How often interactions should be done',
       default: 10000,
       type: 'number',
       requiresArg: true,
     },
-    selectionRatio: {
-      alias: 'r',
+    interactionRatio: {
       description: 'The amount of sessions the should do selections (in %)',
       default: 0.1,
       type: 'number',
       requiresArg: true,
-    },
-    loginUrl: {
-      alias: 'l',
-      description: 'If a cookie should be fetched and used in ws header',
-      type: 'string',
     },
     keepAlive: {
       alias: 'k',
@@ -76,39 +54,29 @@ const argv = yargs // eslint-disable-line
       default: false,
       type: 'boolean',
     },
-    objects: {
-      description: 'Defined objects to create after session create',
-      default: [],
-      type: 'array',
-    },
-    secure: {
-      description: 'Wheather to use wss or ws',
-      default: true,
-      type: 'boolean',
-    },
     config: {
       description: 'Path to config file',
       type: 'string',
       alias: 'c',
     },
+    scenario: {
+      description: 'Path to scenario file',
+      type: 'string',
+      requiresArg: true,
+      alias: 's',
+    },
     sessionLength: {
-      alias: 'sl',
       description: 'The length of each session (in ms)',
       default: 1000000000,
       type: 'number',
       requiresArg: false,
     },
     triangular: {
-      alias: 'tr',
       description: 'If set to true the traffic speed will slowly increase to the '
         + 'maximum rate (the specified interval) and thereafter slowly decrease',
       default: false,
       type: 'boolean',
       requiresArg: false,
-    },
-    headers: {
-      description: 'Headers that should be used when connecting',
-      type: 'string',
     },
     seed: {
       description: 'The seed that should be used for generating randomness',
@@ -124,7 +92,7 @@ const argv = yargs // eslint-disable-line
       throw new Error(`Config ${configPath} not found`);
     }
     let config = {};
-    const foundConfig = require(configPath); // eslint-disable-line
+    foundConfig = require(configPath); // eslint-disable-line
     if (typeof foundConfig === 'function') {
       config = Object.assign({}, foundConfig());
     } else {
@@ -134,11 +102,11 @@ const argv = yargs // eslint-disable-line
   })
   .argv;
 
+argv.seed = argv.seed ? argv.seed : runner.generateGUID();
+
 argv.objects = JSON.stringify(argv.objects);
 
-if (argv.headers) {
-  argv.headers = JSON.stringify(argv.headers);
-}
+argv.scenario = path.resolve(argv.scenario);
 
 const infoArray = new Array(argv.threads).fill([]);
 
@@ -158,7 +126,7 @@ if (cluster.isMaster) {
       msg = JSON.parse(msg); // eslint-disable-line no-param-reassign
       if (msg.type === 'INFO') {
         infoArray[msg.id - 1] = msg.msg;
-        UI.table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Selections', 'Errors', 'Memory Usage (MB)'], data: infoArray });
+        UI.table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Interactions', 'Errors', 'Memory Usage (MB)'], data: infoArray });
         UI.main.render();
       } else if (msg.type === 'LOG') {
         UI.log.log(`Worker ${msg.id} reported: ${msg.msg}`);
@@ -172,5 +140,5 @@ if (cluster.isMaster) {
     }
   });
 } else {
-  runner.start(cluster.worker.id);
+  runner.start(cluster.worker.id, foundConfig);
 }

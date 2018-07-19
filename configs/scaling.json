@@ -1,15 +1,18 @@
 {
-    "max": 50,
-    "threads": 1,
-    "gateway": "xx.xx.xx.xx",
-    "docpath": "/app/doc/Shared-Africa-Urbanization.qvf",
-    "objects":[
-      ["Country Name", "Avg([Life Expectancy (Years)])"]
-    ],
-    "direct": false,
-    "keepAlive": true,
-    "selectionRatio": 0,
-    "selectionInterval": 3600000,
-    "interval": 10000,
-    "secure": false
+  "max": 50,
+  "threads": 1,
+  "gateway": "xx.xx.xx.xx",
+  "docpath": "/app/doc/5f5f03fe-00f3-4a4b-ac52-db32152a7e44",
+  "objects": [
+    [
+      "Country Name",
+      "Avg([Life Expectancy (Years)])"
+    ]
+  ],
+  "direct": false,
+  "keepAlive": true,
+  "selectionRatio": 0,
+  "selectionInterval": 3600000,
+  "interval": 10000,
+  "secure": false
 }

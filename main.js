@@ -110,6 +110,11 @@ const argv = yargs // eslint-disable-line
       description: 'Headers that should be used when connecting',
       type: 'string',
     },
+    seed: {
+      description: 'The seed that should be used for generating randomness',
+      type: 'string',
+      requiresArg: false,
+    },
   })
   .config('config', (configPath) => {
     if (configPath === null) {
@@ -141,6 +146,8 @@ if (cluster.isMaster) {
   if (argv.threads === -1) {
     argv.threads = os.cpus().length;
   }
+
+  argv.seed = argv.seed ? argv.seed : runner.generateGUID();
 
   const UI = ui.init(argv);
 

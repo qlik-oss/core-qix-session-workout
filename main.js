@@ -147,9 +147,7 @@ if (cluster.isMaster) {
     argv.threads = os.cpus().length;
   }
 
-  if (argv.seed === undefined) {
-    argv.seed = runner.generateGUID();
-  }
+  argv.seed = argv.seed ? argv.seed : runner.generateGUID();
 
   const UI = ui.init(argv);
 

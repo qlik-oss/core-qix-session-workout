@@ -1,5 +1,5 @@
 {
-  "max": 5,
+  "max": 2,
   "threads": 2,
   "gateway": "localhost",
   "direct": true,

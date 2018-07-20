@@ -42,7 +42,7 @@ exports.connect = async (sessionId) => {
     const qix = await enigma.create(getEnigmaConfig(sessionId)).open();
     qix.sessionId = sessionId;
 
-    if (config.direct) await qix.openDoc(config.docPath);
+    if (config.direct) await qix.openDoc(config.docpath);
     sendLog(`Connected session with id: ${sessionId}`);
     return Promise.resolve(qix);
   } catch (e) {

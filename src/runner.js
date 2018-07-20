@@ -105,16 +105,16 @@ async function connect() {
       await wait(INTERVAL); // eslint-disable-line no-await-in-loop
     }
 
-    try {
-      // Generate a session id to make each session unique
-      const sessionId = exports.generateGUID();
+    // Generate a session id to make each session unique
+    const sessionId = exports.generateGUID();
 
+    try {
       const qix = await scenario.connect(sessionId); // eslint-disable-line no-await-in-loop
 
       sessions.push(qix);
       sendInfo();
     } catch (e) {
-      sendLog('Error occured while connecting: ', e);
+      sendLog(`Error occured while connecting session ${sessionId} with message: ${JSON.stringify(e)}`);
       errorCount += 1;
     }
   }

@@ -57,7 +57,7 @@ async function doInteract() {
     for (let i = 0; i < nbrOfInteractions; i += 1) {
       // Pick a random qix session on this worker and interact
       const qix = sessions[getRandomNumberBetween(0, sessions.length)];
-      await scenario.interact(qix); // eslint-disable-line no-await-in-loop
+      await scenario.interact(qix);
       nbrInteractions += 1;
     }
     sendInfo();
@@ -99,17 +99,16 @@ async function connect() {
 
   for (let i = 1; i <= MAX_SESSIONS; i += 1) {
     if (process.env.triangular === 'true') {
-      // eslint-disable-next-line no-await-in-loop
       await wait(getTriangularWaitTime(INTERVAL, i, MAX_SESSIONS));
     } else {
-      await wait(INTERVAL); // eslint-disable-line no-await-in-loop
+      await wait(INTERVAL);
     }
 
     // Generate a session id to make each session unique
     const sessionId = exports.generateGUID();
 
     try {
-      const qix = await scenario.connect(sessionId); // eslint-disable-line no-await-in-loop
+      const qix = await scenario.connect(sessionId);
 
       sessions.push(qix);
       sendInfo();
@@ -124,12 +123,10 @@ async function disconnect() {
   const delay = (INTERVAL * 10) / sessions.length;
   // eslint-disable-next-line no-restricted-syntax
   for (const qix of sessions) {
-    /* eslint-disable no-await-in-loop */
     await qix.session.close();
     closedSessions += 1;
     sendLog(`Disconnected session ${qix.sessionId}`);
     await sleep(delay);
-    /* eslint-enable no-await-in-loop */
   }
 
   // Empty sessions

@@ -8,7 +8,7 @@ let sendLog;
 function getEnigmaConfig(sessionId) {
   const websocketUrlPart = (config.secure) ? 'wss' : 'ws';
 
-  const headers = { config };
+  const headers = config.headers || {};
   headers['X-Qlik-Session'] = sessionId;
 
   return {
@@ -39,7 +39,7 @@ exports.init = async (CONFIG, SENDLOG) => {
 
 exports.connect = async (sessionId) => {
   try {
-    const qix = await enigma.create(getEnigmaConfig(config, sessionId)).open();
+    const qix = await enigma.create(getEnigmaConfig(sessionId)).open();
     qix.sessionId = sessionId;
 
     if (config.direct) await qix.openDoc(config.docPath);

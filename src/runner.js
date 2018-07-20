@@ -132,8 +132,9 @@ async function disconnect() {
     /* eslint-enable no-await-in-loop */
   }
 
-  // Empty sessions array
+  // Empty sessions
   sessions.splice(0, sessions.length);
+  sendLog('Scenario has ended and all sessions are disconnected.');
 }
 
 exports.start = async (workerNr, config) => {

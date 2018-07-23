@@ -7,6 +7,7 @@ let getRandomNumber;
 let log;
 let fieldNames;
 
+// Private method for defining an enigma config used when connecting to QLik Associative Engine.
 function getEnigmaConfig(sessionId) {
   const websocketUrlPart = (config.secure) ? 'wss' : 'ws';
 
@@ -34,7 +35,7 @@ function getEnigmaConfig(sessionId) {
   };
 }
 
-// Private method for retrieving all fields in the document
+// Private method for retrieving all fields in the document.
 async function getFieldNames(qix) {
   const app = await qix.getActiveDoc();
   const sessionObject = await app.createSessionObject(
@@ -53,7 +54,7 @@ async function getFieldNames(qix) {
   return sessionLayout.qFieldList.qItems.map(i => i.qName);
 }
 
-// Private method for making a random selection in a field. Triggered by interact.
+// Private method for making a random selection in a random field. Triggered by interact.
 async function doRandomSelection(app, fieldName, sessionId) {
   const sessionObject = await app.createSessionObject(
     {

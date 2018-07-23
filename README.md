@@ -45,7 +45,7 @@ The scenario uses enigma.js to communicate with the Qlik Associative Engine.
 
 There are three methods that are needed in a scenario implementation to be executable with this tool:
 
-- `init(CONFIG, GETRANDOMNUMBERBETWEEN, SENDLOG)` - Method for initializing the scenario i.e. setting the config file and method for passing logs to the runner. Since the config is passed to the scenario it can also be reused for scenario parameters that are shared between different scenarios e.g. headers or gateway URL.
+- `init(configuration, getRandomNumber, log)` - Method for initializing the scenario i.e. setting the config file and method for passing logs to the runner. Since the config is passed to the scenario it can also be reused for scenario parameters that are shared between different scenarios e.g. headers or gateway URL.
 - `connect(sessionId)` - Method for connecting the session to a Qlik Associative Engine instance. A random sessionId is passed to guarantee unique sessions. This method should return a qix object.
 - `interact(qix)` - Depending on configuration e.g. **interactionInterval** the scenario will be trigged with a certain interval to perform an interaction.
   It is up to the scenario to define what interaction that should be made e.g. making a selection, creating objects etc.

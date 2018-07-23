@@ -7,7 +7,7 @@ const loggerOptions = {
   width: '50%',
   height: '50%',
   border: 'line',
-  label: ' Error logs ',
+  label: ' Logs ',
   tags: true,
   keys: true,
   vi: true,
@@ -41,10 +41,9 @@ function boxOptions(argv) {
     vi: true,
     alwaysScroll: true,
     scrollable: true,
-    content: `{blue-fg}Threads:{/blue-fg} ${argv.threads}
-{blue-fg}Scenario:{/blue-fg} ${argv.scenario}
-{blue-fg}Sessions:{/blue-fg} ${argv.max}
-{blue-fg}Duration:{/blue-fg} ${argv.interval} ms
+    content: `{blue-fg}Scenario:{/blue-fg} ${argv.scenario}
+{blue-fg}Threads:{/blue-fg} ${argv.threads}
+{blue-fg}Sessions per thread:{/blue-fg} ${argv.max}
 {blue-fg}Interaction Interval:{/blue-fg} ${argv.interactionInterval / 1000} s
 {blue-fg}Interaction Ratio:{/blue-fg} ${argv.interactionRatio * 100} %
 {blue-fg}Keepalive:{/blue-fg} ${argv.keepAlive}

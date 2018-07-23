@@ -6,6 +6,8 @@ Generic load test tool for Qlik Core.
 
 This is an experimental tool and its APIs is under redesign.
 
+![screenshot](./screenshot.png)
+
 ## Usage
 
 ```code

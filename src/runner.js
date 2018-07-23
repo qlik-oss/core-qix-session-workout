@@ -143,7 +143,7 @@ exports.start = async (workerNr, config) => {
 
   // init scenario
   scenario = require(process.env.scenario); // eslint-disable-line
-  await scenario.init(config, sendLog);
+  await scenario.init(config, getRandomNumberBetween, sendLog);
 
   const interactionIntervalFn = setInterval(() => {
     doInteract();
@@ -160,7 +160,7 @@ exports.start = async (workerNr, config) => {
   await connect(sessions);
 
 
-  if (KEEP_ALIVE === 'false') {
+  if (KEEP_ALIVE === 'false' || sessions.length === 0) {
     clearInterval(interactionIntervalFn);
     await disconnect(sessions);
     sendInfo();

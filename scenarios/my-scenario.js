@@ -29,7 +29,7 @@ function getEnigmaConfig(sessionId) {
             return qixRequest.retry();
           }
         }
-        return this.Promise.reject(error);
+        return Promise.reject(error);
       },
     }],
   };
@@ -80,8 +80,10 @@ async function doRandomSelection(app, fieldName, sessionId) {
     log(`Selecting value ${randomValue} in field ${fieldName} in session ${sessionId}`);
     await sessionObject.selectListObjectValues('/qListObjectDef', [randomValue], true);
     await app.destroySessionObject(sessionObject.id);
+    return Promise.resolve();
   } catch (e) {
     log(`Failed to perform selection in session ${sessionId} with message ${e}`);
+    return Promise.reject(e);
   }
 }
 

@@ -9,6 +9,8 @@ const runner = require('./src/runner');
 const ui = require('./src/ui');
 
 let foundConfig;
+let nbrWorkers = 0;
+let exitCode = 0;
 
 const argv = yargs // eslint-disable-line
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
@@ -121,6 +123,7 @@ if (cluster.isMaster) {
 
   for (let i = 0; i < argv.threads; i += 1) {
     const worker = cluster.fork(argv);
+    nbrWorkers += 1;
 
     worker.on('message', (msg) => {
       msg = JSON.parse(msg); // eslint-disable-line no-param-reassign
@@ -137,6 +140,12 @@ if (cluster.isMaster) {
   cluster.on('exit', (worker, code, signal) => {
     if (code !== 0) {
       UI.log.log(' >>> Worker %d died (%s)', worker.process.pid, signal || code);
+      exitCode = signal || code;
+    }
+    nbrWorkers -= 1;
+    if (nbrWorkers === 0) {
+      UI.log.log(`All worker threads has exited, exiting application with code ${exitCode}`);
+      process.exit(exitCode);
     }
   });
 } else {

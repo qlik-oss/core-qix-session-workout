@@ -45,6 +45,12 @@ function sendLog(msg) {
   process.send(JSON.stringify(json));
 }
 
+function sendExit() {
+  const exitCode = errorCount === 0 ? 0 : 1;
+  sendLog(`Worker with id ${WORKER_ID} exiting with code ${exitCode}. Number of errors: ${errorCount}`);
+  process.exit(exitCode);
+}
+
 function getRandomNumberBetween(start, end) {
   return Math.floor(Math.random() * (end - start)) + start;
 }
@@ -57,8 +63,13 @@ async function doInteract() {
     for (let i = 0; i < nbrOfInteractions; i += 1) {
       // Pick a random qix session on this worker and interact
       const qix = sessions[getRandomNumberBetween(0, sessions.length)];
-      await scenario.interact(qix);
-      nbrInteractions += 1;
+      try {
+        await scenario.interact(qix);
+        nbrInteractions += 1;
+      } catch (e) {
+        sendLog(`Interaction with session ${qix.sessionId} failed with message: ${e}`);
+        errorCount += 1;
+      }
     }
     sendInfo();
   } else {
@@ -129,9 +140,9 @@ async function disconnect() {
     await sleep(delay);
   }
 
-  // Empty sessions
-  sessions.splice(0, sessions.length);
   sendLog('Scenario has ended and all sessions are disconnected.');
+  sendInfo();
+  sendExit();
 }
 
 exports.start = async (workerNr, config) => {
@@ -163,7 +174,6 @@ exports.start = async (workerNr, config) => {
   if (KEEP_ALIVE === 'false' || sessions.length === 0) {
     clearInterval(interactionIntervalFn);
     await disconnect(sessions);
-    sendInfo();
   } else {
     setInterval(() => {
       sendInfo();

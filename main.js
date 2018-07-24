@@ -106,8 +106,6 @@ const argv = yargs // eslint-disable-line
 
 argv.seed = argv.seed ? argv.seed : runner.generateGUID();
 
-argv.objects = JSON.stringify(argv.objects);
-
 argv.scenario = path.resolve(argv.scenario);
 
 const infoArray = new Array(argv.threads).fill([]);

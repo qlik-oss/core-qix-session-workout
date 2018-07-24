@@ -88,10 +88,10 @@ async function doRandomSelection(app, fieldName, sessionId) {
 }
 
 // Method for initializing a scenario i.e. setting variables needed before a connect.
-exports.init = async (configuration, getRandomNumberBetween, SENDLOG) => {
+exports.init = async (configuration, getRandomNumberBetween, sendLog) => {
   config = configuration;
   getRandomNumber = getRandomNumberBetween;
-  log = SENDLOG;
+  log = sendLog;
 };
 
 // Method for connecting a session to a Qlik Associative Engine instance.

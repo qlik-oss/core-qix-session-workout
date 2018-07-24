@@ -48,6 +48,7 @@ function sendLog(msg) {
 function sendExit() {
   const exitCode = errorCount === 0 ? 0 : 1;
   sendLog(`Worker with id ${WORKER_ID} exiting with code ${exitCode}. Number of errors: ${errorCount}`);
+  sendInfo();
   process.exit(exitCode);
 }
 
@@ -141,7 +142,6 @@ async function disconnect() {
   }
 
   sendLog('Scenario has ended and all sessions are disconnected.');
-  sendInfo();
   sendExit();
 }
 

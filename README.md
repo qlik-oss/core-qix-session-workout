@@ -42,7 +42,7 @@ The seed will be shown in the UI of the tool to make it possible to rerun the ex
 
 ## Scenarios
 
-A scenario implements the actions that should be performed for each session for example connecting and interacting with the session.
+A scenario implements the actions that should be performed for each session. For example, connecting and interacting with the session.
 
 The tool takes a `scenario` as a parameter either by using the `-s` or `--scenario` flag. The scenario can also be added as a property to the `config` file if the configuration is specific to the scenario.
 

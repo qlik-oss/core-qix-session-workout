@@ -127,6 +127,7 @@ async function connect() {
     } catch (e) {
       sendLog(`Error occured while connecting session ${sessionId} with message: ${JSON.stringify(e)}`);
       errorCount += 1;
+      closedSessions += 1;
     }
   }
 }

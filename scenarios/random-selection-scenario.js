@@ -1,13 +1,13 @@
 const enigma = require('enigma.js');
 const WebSocket = require('ws');
-const qixSchema = require('enigma.js/schemas/12.20.0.json');
+const qixSchema = require('enigma.js/schemas/12.67.2.json');
 
 let config;
 let getRandomNumber;
 let log;
 let fieldNames;
 
-// Private method for defining an enigma config used when connecting to QLik Associative Engine.
+// Private method for defining an enigma config used when connecting to Qlik Associative Engine.
 function getEnigmaConfig(sessionId) {
   const websocketUrlPart = (config.secure) ? 'wss' : 'ws';
 

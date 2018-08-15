@@ -10,7 +10,6 @@ const ui = require('./src/ui');
 
 let foundConfig;
 let nbrWorkers = 0;
-let exitCode = 0;
 
 const argv = yargs // eslint-disable-line
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
@@ -20,7 +19,7 @@ const argv = yargs // eslint-disable-line
   .options({
     threads: {
       alias: 't',
-      description: 'Number of threads to run in parallell/n Setting to `-1` will use the number of cores',
+      description: 'Number of threads to run in parallell\n Setting to `-1` will use the number of cores',
       default: 1,
       type: 'number',
       requiresArg: true,
@@ -65,6 +64,7 @@ const argv = yargs // eslint-disable-line
       description: 'Path to scenario file',
       type: 'string',
       requiresArg: true,
+      demandOption: true,
       alias: 's',
     },
     sessionLength: {
@@ -74,8 +74,7 @@ const argv = yargs // eslint-disable-line
       requiresArg: false,
     },
     triangular: {
-      description: 'If set to true the traffic speed will slowly increase to the '
-        + 'maximum rate (the specified interval) and thereafter slowly decrease',
+      description: 'If set to true the traffic speed will slowly increase to the\nmaximum rate (the specified interval) and thereafter slowly decrease',
       default: false,
       type: 'boolean',
       requiresArg: false,
@@ -115,7 +114,7 @@ if (cluster.isMaster) {
     argv.threads = os.cpus().length;
   }
 
-  argv.seed = argv.seed ? argv.seed : runner.generateGUID();
+  // argv.seed = argv.seed ? argv.seed : runner.generateGUID();
 
   const UI = ui.init(argv);
 
@@ -130,7 +129,7 @@ if (cluster.isMaster) {
         UI.table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Interactions', 'Errors', 'Memory Usage (MB)'], data: infoArray });
         UI.main.render();
       } else if (msg.type === 'LOG') {
-        UI.log.log(`Worker ${msg.id} reported: ${msg.msg}`);
+        UI.log.log(`{blue-fg}Worker ${msg.id} reported:{/blue-fg} ${msg.msg}`);
       }
     });
   }
@@ -138,12 +137,10 @@ if (cluster.isMaster) {
   cluster.on('exit', (worker, code, signal) => {
     if (code !== 0) {
       UI.log.log(' >>> Worker %d died (%s)', worker.process.pid, signal || code);
-      exitCode = signal || code;
     }
     nbrWorkers -= 1;
     if (nbrWorkers === 0) {
-      UI.log.log(`All worker threads has exited, exiting application with code ${exitCode}`);
-      process.exit(exitCode);
+      UI.log.log('{red-fg}All worker threads has exited, exit the application with `Ctrl+c`{/red-fg}');
     }
   });
 } else {

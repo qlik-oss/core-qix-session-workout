@@ -28,6 +28,7 @@ Options:
   --triangular           If set to true the traffic speed will slowly increase to the
                          maximum rate (the specified interval) and thereafter slowly decrease                     [boolean] [default: false]
   --seed                 The seed that should be used for generating randomness                                                     [string]
+  --host                 URL to host                                                                         [string] [default: "localhost"]
 ```
 
 Program arguments are defined in this order of precedence:

@@ -2,22 +2,41 @@ version: 2
 
 jobs:
   build:
-    docker:
-      - image: circleci/node:8.9.4
+    machine: true
     working_directory: ~/core-qix-session-workout
     steps:
       - checkout
+      - run:
+          name: Install node
+          command: |
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v8
+            nvm alias default v8
+            # Each step uses the same `$BASH_ENV`, so need to modify it
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
       - restore_cache:
           key: npm-dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Install dependencies
-          command:
-            npm install --quiet
+          command: npm install --quiet
       - run:
           name: Run ESLint
-          command:
-            npm run lint
+          command: npm run lint
       - save_cache:
           key: npm-dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+      - run:
+          name: Spin up a local setup
+          command: ACCEPT_EULA=yes docker-compose up -d
+      - run:
+          name: Run test
+          command: |
+            set -e
+            ENGINE_CONTAINER_ID=$(docker ps -aqf "name=qix-engine")
+            GATEWAY_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_CONTAINER_ID")
+            node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js --host $GATEWAY --sessionLength 5000 --exit true

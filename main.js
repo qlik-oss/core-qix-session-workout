@@ -8,7 +8,6 @@ const path = require('path');
 const runner = require('./src/runner');
 const ui = require('./src/ui');
 
-let foundConfig;
 let nbrWorkers = 0;
 let exitCode = 0;
 
@@ -84,6 +83,12 @@ const argv = yargs // eslint-disable-line
       type: 'string',
       requiresArg: false,
     },
+    host: {
+      description: 'URL to host',
+      type: 'string',
+      requiresArg: false,
+      default: 'localhost',
+    },
   })
   .config('config', (configPath) => {
     if (configPath === null) {
@@ -93,7 +98,7 @@ const argv = yargs // eslint-disable-line
       throw new Error(`Config ${configPath} not found`);
     }
     let config = {};
-    foundConfig = require(configPath); // eslint-disable-line
+    let foundConfig = require(configPath); // eslint-disable-line
     if (typeof foundConfig === 'function') {
       config = Object.assign({}, foundConfig());
     } else {
@@ -148,5 +153,5 @@ if (cluster.isMaster) {
     }
   });
 } else {
-  runner.start(cluster.worker.id, foundConfig);
+  runner.start(cluster.worker.id, argv);
 }

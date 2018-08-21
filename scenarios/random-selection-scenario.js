@@ -15,7 +15,7 @@ function getEnigmaConfig(sessionId) {
   headers['X-Qlik-Session'] = sessionId;
 
   return {
-    url: (config.direct) ? `${websocketUrlPart}://${config.gateway}:9076/app/engineData` : `${websocketUrlPart}://${config.gateway}${config.docpath}`,
+    url: (config.direct) ? `${websocketUrlPart}://${config.host}:9076/app/engineData` : `${websocketUrlPart}://${config.host}${config.docpath}`,
     schema: qixSchema,
     createSocket: url => new WebSocket(url, {
       rejectUnauthorized: false,

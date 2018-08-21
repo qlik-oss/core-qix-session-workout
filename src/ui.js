@@ -7,7 +7,7 @@ const loggerOptions = {
   width: '50%',
   height: '50%',
   border: 'line',
-  label: ' Error logs ',
+  label: ' Logs ',
   tags: true,
   keys: true,
   vi: true,
@@ -41,19 +41,13 @@ function boxOptions(argv) {
     vi: true,
     alwaysScroll: true,
     scrollable: true,
-    content: `{blue-fg}Threads:{/blue-fg} ${argv.threads}
-{blue-fg}Gateway:{/blue-fg} ${argv.gateway}
-{blue-fg}Headers:{/blue-fg} ${argv.headers}
-{blue-fg}Direct Connect:{/blue-fg} ${argv.direct}
-{blue-fg}Docpath:{/blue-fg} ${argv.docpath}
-{blue-fg}Sessions:{/blue-fg} ${argv.max}
-{blue-fg}Duration:{/blue-fg} ${argv.interval} ms
-{blue-fg}Selection Interval:{/blue-fg} ${argv.selectionInterval / 1000} s
-{blue-fg}Selection Ratio:{/blue-fg} ${argv.selectionRatio * 100} %
-{blue-fg}Login Url:{/blue-fg} ${argv.loginUrl}
-{blue-fg}Keepalive:{/blue-fg} ${argv.keepAlive}
-{blue-fg}Seed:{/blue-fg} ${argv.seed}
-{blue-fg}Objects:{/blue-fg} ${JSON.parse(argv.objects).length}`,
+    content: `{blue-fg}Scenario:{/blue-fg} ${argv.scenario}
+{blue-fg}Threads:{/blue-fg} ${argv.threads}
+{blue-fg}Sessions per thread:{/blue-fg} ${argv.max}
+{blue-fg}Interaction Interval:{/blue-fg} ${argv.interactionInterval / 1000} s
+{blue-fg}Interaction Ratio:{/blue-fg} ${argv.interactionRatio * 100} %
+{blue-fg}Session length:{/blue-fg} ${argv.sessionLength / 1000} s
+{blue-fg}Seed:{/blue-fg} ${argv.seed}`,
   };
 }
 
@@ -65,7 +59,7 @@ const ui = {
     const table = grid.set(6, 0, 6, 9, contrib.table, tableOptions);
     const box = grid.set(6, 9, 6, 3, blessed.box, boxOptions(argv));
 
-    table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Selections', 'Errors', 'Memory Usage (MB)'], data: [] });
+    table.setData({ headers: ['Worker Id', 'PID', 'Connections (closed)', 'Interactions', 'Errors', 'Memory Usage (MB)'], data: [] });
 
     main.key('C-c', () => process.exit(0));
     main.render();

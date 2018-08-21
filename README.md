@@ -1,35 +1,74 @@
 # core-qix-session-workout
 
+[![CircleCI](https://circleci.com/gh/qlik-oss/core-qix-session-workout.svg?style=svg)](https://circleci.com/gh/qlik-oss/core-qix-session-workout)
+
 Generic load test tool for Qlik Core.
 
-This is an experimental tool and it's APIs is under redesign.
+This is an experimental tool and its APIs is under redesign.
 
-```
-Usage: cli.js [options]
+![screenshot](./screenshot.png)
+
+## Usage
+
+```code
+Usage: main.js [options]
 
 Options:
-  --help, -h               Show help                                                                                               [boolean]
-  --threads, -t            Number of threads to run in parallell/n Setting to `-1` will use the number of cores        [number] [default: 1]
-  --gateway, -g            Gateway to connect to                                                             [string] [default: "localhost"]
-  --direct, -d             Opens the app directly on the engine                                                   [boolean] [default: false]
-  --docpath                Path to document                                                     [string] [default: "/doc/doc/drugcases.qvf"]
-  --max, -m                Max number of sessions                                                                                   [number]
-  --interval, -i           How often new sessions should be created                                                   [number] [default: 60]
-  --selectionInterval, -s  How often selections should be done                                                     [number] [default: 10000]
-  --selectionRatio, -r     The amount of sessions the should do selections (in %)                                    [number] [default: 0.1]
-  --loginUrl, -l           If a cookie should be fetched and used in ws header
-                                                                [string] [default: "/login/local/callback?username=admin&password=password"]
-  --cookie                 Fixed cookie to be used in ws header                                                                     [string]
-  --keepAlive, -k          Don´t close sessions after ramp up                                                     [boolean] [default: false]
-  --objects                Defined objects to create after session create                                              [array] [default: []]
-  --secure                 Wheather to use wss or ws                                                               [boolean] [default: true]
-  --seed                   What seed to use for the random selections, if none is provided it will use a random GUID.
-                           The seed for each thread will be this string and the thread number              [string] [default: a random GUID]
-  --config, -c             Path to JSON config file                                                                 [string] [default: null]
-  ```
+  --help, -h             Show help                                                                                                 [boolean]
+  --threads, -t          Number of threads to run in parallell
+                         Setting to `-1` will use the number of cores                                                  [number] [default: 1]
+  --max, -m              Max number of sessions                                                                                     [number]
+  --interval, -i         How often new sessions should be created                                                     [number] [default: 60]
+  --interactionInterval  How often interactions should be done                                                     [number] [default: 10000]
+  --interactionRatio     The amount of sessions the should do selections (in %)                                      [number] [default: 0.1]
+  --keepAlive, -k        Don´t close sessions after ramp up                                                       [boolean] [default: false]
+  --config, -c           Path to JSON config file                                                                                   [string]
+  --scenario, -s         Path to scenario file                                                                           [string] [required]
+  --sessionLength        The length of each session (in ms)                                                   [number] [default: 1000000000]
+  --triangular           If set to true the traffic speed will slowly increase to the
+                         maximum rate (the specified interval) and thereafter slowly decrease                     [boolean] [default: false]
+  --seed                 The seed that should be used for generating randomness                                                     [string]
+```
 
-Configurations can be specified in a config file and be used as only parameter to the `cli.js`
+Program arguments are defined in this order of precedence:
+
+- Command line args
+- Env vars
+- Config file/objects
+- Configured defaults
+
+## Config files
+
+Configurations can be specified in a config file and be passed as a parameter to `main.js` as in example below:
 
 ```bash
-./cli.js -c ./configs/local.js
+node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js
 ```
+
+## Scenarios
+
+A scenario implements the actions that should be performed for each session. For example, connecting and interacting
+with the session.
+
+The tool takes a `scenario` as a parameter either by using the `-s` or `--scenario` flag. The scenario can also be added
+as a property to the `config` file if the configuration is specific to the scenario.
+
+A basic example of how a scenario can be implemented is available in [random-selection-scenario.js](./scenarios/random-selection-scenario.js).
+The scenario uses enigma.js to communicate with the Qlik Associative Engine.
+
+There are three methods that are needed in a scenario implementation to be executable with this tool:
+
+- `init(configuration, getRandomNumber, log)` - Method for initializing the scenario i.e. setting the config file and
+  method for passing logs to the runner. Since the config is passed to the scenario it can also be reused for scenario
+  parameters that are shared between different scenarios e.g. headers or gateway URL.
+- `connect(sessionId)` - Method for connecting the session to a Qlik Associative Engine instance.
+  A random sessionId is passed to guarantee unique sessions. This method should return a qix object.
+- `interact(qix)` - Depending on configuration e.g. **interactionInterval** the scenario will be trigged with a certain
+  interval to perform an interaction. It is up to the scenario to define what interaction that should be made e.g.
+  making a selection, creating objects etc.
+
+## Seeding
+
+The tool will use a seed to generate random numbers used for interactions and intervals when triggering a scenario.
+If a seed is not specified as a parameter to the tool or in the config file, then a seed will be generated for each run.
+The seed will be shown in the UI of the tool to make it possible to rerun the exact same scenario again.

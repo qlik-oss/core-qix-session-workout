@@ -1,8 +1,8 @@
 {
-  "max": 50,
+  "max": 2,
   "threads": 1,
   "gateway": "xx.xx.xx.xx",
-  "docpath": "/app/doc/5f5f03fe-00f3-4a4b-ac52-db32152a7e44",
+  "docpath": "/app/doc/5f5f03fe-00f3-4a4b-ac52-db32152a7e44.qvf",
   "objects": [
     [
       "Country Name",
@@ -11,8 +11,9 @@
   ],
   "direct": false,
   "keepAlive": true,
-  "selectionRatio": 0,
-  "selectionInterval": 3600000,
-  "interval": 10000,
-  "secure": false
-}
+  "interactionRatio": 0.2,
+  "interactionInterval": 2000,
+  "interval": 100,
+  "secure": false,
+  "sessionLength":100000
+ }

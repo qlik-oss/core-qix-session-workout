@@ -1,7 +1,6 @@
 {
     "max": 5,
     "threads": 10,
-    "gateway": "localhost",
     "direct": true,
     "secure" : false,
     "docpath": "drugcases.qvf",

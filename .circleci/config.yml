@@ -2,8 +2,7 @@ version: 2
 
 jobs:
   build:
-    docker:
-      - image: circleci/node:8.9.4
+    machine: true
     working_directory: ~/core-qix-session-workout
     steps:
       - checkout
@@ -19,7 +18,6 @@ jobs:
           key: npm-dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-      - setup_remote_docker
       - run:
           name: Spin up a local setup
           command: ACCEPT_EULA=yes docker-compose up -d
@@ -29,6 +27,4 @@ jobs:
             set -e
             ENGINE_CONTAINER_ID=$(docker ps -aqf "name=qix-engine")
             GATEWAY_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_CONTAINER_ID")
-            TEST_CONTAINER_ID=$(docker run -d node:9.8.0 tail -f /dev/null)
-            docker cp . $TEST_CONTAINER_ID:/
-            docker exec -t -e GATEWAY=$GATEWAY_IP $TEST_CONTAINER_ID sh -c 'node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js -g $GATEWAY --sessionLength 5000 --exit true'
+            node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js -g $GATEWAY --sessionLength 5000 --exit true

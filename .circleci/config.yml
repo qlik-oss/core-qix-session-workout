@@ -6,6 +6,9 @@ jobs:
     working_directory: ~/core-qix-session-workout
     steps:
       - checkout
+      - run:
+          name: Install node lts version
+          command: nvm install 8.11.4
       - restore_cache:
           key: npm-dependency-cache-{{ checksum "package.json" }}
       - run:

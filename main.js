@@ -10,6 +10,7 @@ const ui = require('./src/ui');
 
 let foundConfig;
 let nbrWorkers = 0;
+let exitCode = 0;
 
 const argv = yargs // eslint-disable-line
   .usage('Tool for running performance tests aginst QLIK Qix Engine\n\nUsage: $0 [options]')
@@ -49,9 +50,8 @@ const argv = yargs // eslint-disable-line
       type: 'number',
       requiresArg: true,
     },
-    keepAlive: {
-      alias: 'k',
-      description: 'Don´t close sessions after ramp up',
+    exit: {
+      description: 'Exit main process after all worker threads has finished',
       default: false,
       type: 'boolean',
     },
@@ -104,8 +104,12 @@ const argv = yargs // eslint-disable-line
   .argv;
 
 argv.seed = argv.seed ? argv.seed : runner.generateGUID();
-
 argv.scenario = path.resolve(argv.scenario);
+
+if (!fs.existsSync(argv.scenario)) {
+  console.error(`Config ${argv.scenario} not found`);
+  process.exit(1);
+}
 
 const infoArray = new Array(argv.threads).fill([]);
 
@@ -113,8 +117,6 @@ if (cluster.isMaster) {
   if (argv.threads === -1) {
     argv.threads = os.cpus().length;
   }
-
-  // argv.seed = argv.seed ? argv.seed : runner.generateGUID();
 
   const UI = ui.init(argv);
 
@@ -136,11 +138,13 @@ if (cluster.isMaster) {
 
   cluster.on('exit', (worker, code, signal) => {
     if (code !== 0) {
-      UI.log.log(' >>> Worker %d died (%s)', worker.process.pid, signal || code);
+      exitCode = signal || code;
+      UI.log.log(' >>> Worker %d died (%s)', worker.process.pid, exitCode);
     }
     nbrWorkers -= 1;
     if (nbrWorkers === 0) {
       UI.log.log('{red-fg}All worker threads has exited, exit the application with `Ctrl+c`{/red-fg}');
+      if (argv.exit) process.exit(exitCode);
     }
   });
 } else {

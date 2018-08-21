@@ -5,7 +5,6 @@ const INTERVAL = process.env.interval;
 const INTERACTION_INTERVAL = process.env.interactionInterval;
 const INTERACTION_RATIO = process.env.interactionRatio;
 const SESSION_LENGTH = process.env.sessionLength;
-const KEEP_ALIVE = process.env.keepAlive;
 const SEED = process.env.seed;
 
 let WORKER_ID;
@@ -161,23 +160,16 @@ exports.start = async (workerNr, config) => {
     doInteract();
   }, INTERACTION_INTERVAL);
 
+  setInterval(() => {
+    sendInfo();
+  }, 1000);
 
-  if (SESSION_LENGTH > 0) {
-    setTimeout(() => {
-      sendLog(`Maximum session length of ${SESSION_LENGTH} ms reached, closing all sessions`);
-      clearInterval(interactionIntervalFn);
-      disconnect(sessions);
-    }, SESSION_LENGTH);
-  }
-  await connect(sessions);
-
-
-  if (KEEP_ALIVE === 'false' || sessions.length === 0) {
+  setTimeout(() => {
+    sendLog(`Maximum session length of ${SESSION_LENGTH} ms reached, closing all sessions`);
     clearInterval(interactionIntervalFn);
-    await disconnect(sessions);
-  } else {
-    setInterval(() => {
-      sendInfo();
-    }, 1000);
-  }
+    disconnect(sessions);
+  }, SESSION_LENGTH);
+
+
+  await connect(sessions);
 };

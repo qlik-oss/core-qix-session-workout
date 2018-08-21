@@ -46,7 +46,7 @@ function boxOptions(argv) {
 {blue-fg}Sessions per thread:{/blue-fg} ${argv.max}
 {blue-fg}Interaction Interval:{/blue-fg} ${argv.interactionInterval / 1000} s
 {blue-fg}Interaction Ratio:{/blue-fg} ${argv.interactionRatio * 100} %
-{blue-fg}Keepalive:{/blue-fg} ${argv.keepAlive}
+{blue-fg}Session length:{/blue-fg} ${argv.sessionLength / 1000} s
 {blue-fg}Seed:{/blue-fg} ${argv.seed}`,
   };
 }

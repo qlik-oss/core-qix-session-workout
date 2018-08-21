@@ -84,6 +84,12 @@ const argv = yargs // eslint-disable-line
       type: 'string',
       requiresArg: false,
     },
+    gateway: {
+      description: 'URL to gateway or engine',
+      type: 'string',
+      requiresArg: false,
+      default: 'localhost',
+    },
   })
   .config('config', (configPath) => {
     if (configPath === null) {

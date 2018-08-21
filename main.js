@@ -89,6 +89,7 @@ const argv = yargs // eslint-disable-line
       type: 'string',
       requiresArg: false,
       default: 'localhost',
+      alias: 'g',
     },
   })
   .config('config', (configPath) => {

@@ -31,4 +31,4 @@ jobs:
             GATEWAY_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_CONTAINER_ID")
             TEST_CONTAINER_ID=$(docker run -d node:9.8.0 tail -f /dev/null)
             docker cp . $TEST_CONTAINER_ID:/
-            docker exec $TEST_CONTAINER_ID sh -c 'node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js --gateway $GATEWAY_IP --sessionLength 5000 --exit true'
+            docker exec -t $TEST_CONTAINER_ID sh -c 'node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js -g $GATEWAY_IP --sessionLength 5000 --exit true'

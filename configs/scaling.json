@@ -1,19 +1,13 @@
 {
-  "max": 2,
+  "max": 50,
   "threads": 1,
   "host": "xx.xx.xx.xx",
   "docpath": "/app/doc/5f5f03fe-00f3-4a4b-ac52-db32152a7e44.qvf",
-  "objects": [
-    [
-      "Country Name",
-      "Avg([Life Expectancy (Years)])"
-    ]
-  ],
   "direct": false,
   "keepAlive": true,
   "interactionRatio": 0.2,
   "interactionInterval": 2000,
-  "interval": 100,
+  "interval": 10000,
   "secure": false,
-  "sessionLength":100000
+  "sessionLength":1000000
  }

@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "blessed": "0.1.81",
-    "blessed-contrib": "4.8.5",
+    "blessed-contrib": "4.8.6",
     "enigma.js": "2.3.0",
     "eslint": "5.5.0",
     "eslint-config-airbnb-base": "13.1.0",

@@ -39,4 +39,4 @@ jobs:
             set -e
             ENGINE_CONTAINER_ID=$(docker ps -aqf "name=qix-engine")
             GATEWAY_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_CONTAINER_ID")
-            node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js --host $GATEWAY --sessionLength 5000 --exit true
+            node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js --host $GATEWAY_IP --sessionLength 5000 --exit true

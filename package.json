@@ -12,7 +12,7 @@
   "devDependencies": {
     "blessed": "0.1.81",
     "blessed-contrib": "4.8.8",
-    "enigma.js": "2.3.2",
+    "enigma.js": "2.4.0",
     "eslint": "5.9.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
@@ -20,7 +20,7 @@
     "request": "2.88.0",
     "seedrandom": "2.4.4",
     "ws": "6.1.2",
-    "yargs": "12.0.4"
+    "yargs": "12.0.5"
   },
   "engines": {
     "node": ">=8.0.x"

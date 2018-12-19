@@ -116,13 +116,10 @@ if (!fs.existsSync(argv.scenario)) {
   process.exit(1);
 }
 
+argv.threads = (argv.threads === -1) ? os.cpus().length : argv.threads;
 const infoArray = new Array(argv.threads).fill([]);
 
 if (cluster.isMaster) {
-  if (argv.threads === -1) {
-    argv.threads = os.cpus().length;
-  }
-
   const UI = ui.init(argv);
 
   for (let i = 0; i < argv.threads; i += 1) {

@@ -85,7 +85,7 @@ async function doRandomSelection(app, fieldName, sessionId) {
       return Promise.resolve();
     }
 
-    log('Didn´t find any fieldvalues to do selections on. Will clear All selections instead');
+    log('Didn\'t find any field values to do selections on. Will clear All selections instead.');
     await app.clearAll();
     await app.destroySessionObject(sessionObject.id);
     return Promise.resolve();

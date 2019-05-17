@@ -13,7 +13,6 @@ function getEnigmaConfig(sessionId) {
 
   const headers = config.headers || {};
   headers['X-Qlik-Session'] = sessionId;
-  headers['User-Agent'] = 'Mozilla/5.0+(Macintosh;+Intel+Mac+OS+X+10_14_3)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/71.0.3578.98+Safari/537.36';
 
   return {
     url: (config.direct) ? `${websocketUrlPart}://${config.host}:9076/app/engineData` : `${websocketUrlPart}://${config.host}${config.docpath}`,

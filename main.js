@@ -8,6 +8,8 @@ const path = require('path');
 const runner = require('./src/runner');
 const ui = require('./src/ui');
 
+const stream = fs.createWriteStream('error.log', { flags: 'a' });
+
 let nbrWorkers = 0;
 let exitCode = 0;
 
@@ -150,5 +152,5 @@ if (cluster.isMaster) {
     }
   });
 } else {
-  runner.start(cluster.worker.id, argv);
+  runner.start(cluster.worker.id, argv, stream);
 }

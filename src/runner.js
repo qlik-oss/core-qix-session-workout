@@ -13,6 +13,8 @@ let closedSessions = 0;
 let errorCount = 0;
 let nbrInteractions = 0;
 let scenario;
+let interactionIntervalFn;
+let stream;
 
 exports.generateGUID = function generateGUID() {
   /* eslint-disable no-bitwise */
@@ -26,13 +28,27 @@ exports.generateGUID = function generateGUID() {
   /* eslint-enable no-bitwise */
 };
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    // eslint-disable-next-line consistent-return
+    return value;
+  };
+};
+
 function sendInfo() {
   const json = {
     id: WORKER_ID,
     type: 'INFO',
     msg: [WORKER_ID, process.pid, `${sessions.length} (${closedSessions})`, nbrInteractions, errorCount, (process.memoryUsage().rss / 1024 / 1024).toFixed(2)],
   };
-  process.send(JSON.stringify(json));
+  process.send(JSON.stringify(json, getCircularReplacer()));
 }
 
 function sendLog(msg) {
@@ -41,7 +57,7 @@ function sendLog(msg) {
     type: 'LOG',
     msg,
   };
-  process.send(JSON.stringify(json));
+  process.send(JSON.stringify(json, getCircularReplacer()));
 }
 
 function sendExit() {
@@ -67,7 +83,8 @@ async function doInteract() {
         await scenario.interact(qix);
         nbrInteractions += 1;
       } catch (e) {
-        sendLog(`Interaction with session ${qix.sessionId} failed with message: ${e}`);
+        stream.write(`${new Date().toISOString()} ${WORKER_ID} ${qix.sessionId} ${JSON.stringify(e, getCircularReplacer())}\n`);
+        sendLog(`Interaction with session ${qix.sessionId} failed with message: ${e.message}`);
         errorCount += 1;
       }
     }
@@ -120,11 +137,18 @@ async function connect() {
 
     try {
       const qix = await scenario.connect(sessionId);
+      // eslint-disable-next-line no-loop-func
+      qix.on('closed', () => {
+        const index = sessions.findIndex(global => global.sessionId === sessionId);
+        sessions.splice(index, 1);
+        closedSessions += 1;
+      });
 
       sessions.push(qix);
       sendInfo();
     } catch (e) {
-      sendLog(`Error occured while connecting session ${sessionId} with message: ${JSON.stringify(e)}`);
+      stream.write(`${new Date().toISOString()} ${WORKER_ID} ${sessionId} ${JSON.stringify(e, getCircularReplacer())}\n`);
+      sendLog(`Error occured while connecting session ${sessionId} with message: ${JSON.stringify(e.message, getCircularReplacer())}`);
       errorCount += 1;
       closedSessions += 1;
     }
@@ -145,7 +169,8 @@ async function disconnect() {
   sendExit();
 }
 
-exports.start = async (workerNr, config) => {
+exports.start = async (workerNr, config, mainStream) => {
+  stream = mainStream;
   seedrandom(`${SEED}_${workerNr}`, { global: true });
 
   WORKER_ID = workerNr;
@@ -156,9 +181,11 @@ exports.start = async (workerNr, config) => {
   scenario = require(process.env.scenario); // eslint-disable-line
   await scenario.init(config, getRandomNumberBetween, sendLog);
 
-  const interactionIntervalFn = setInterval(() => {
-    doInteract();
-  }, INTERACTION_INTERVAL);
+  if (INTERACTION_RATIO > 0) {
+    interactionIntervalFn = setInterval(() => {
+      doInteract();
+    }, INTERACTION_INTERVAL);
+  }
 
   setInterval(() => {
     sendInfo();

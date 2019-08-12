@@ -123,7 +123,7 @@ function getTriangularWaitTime(meanInterval, index, max) {
 }
 
 async function connect() {
-  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   for (let i = 1; i <= MAX_SESSIONS; i += 1) {
     if (process.env.triangular === 'true') {
@@ -139,7 +139,7 @@ async function connect() {
       const qix = await scenario.connect(sessionId);
       // eslint-disable-next-line no-loop-func
       qix.on('closed', () => {
-        const index = sessions.findIndex(global => global.sessionId === sessionId);
+        const index = sessions.findIndex((global) => global.sessionId === sessionId);
         sessions.splice(index, 1);
         closedSessions += 1;
       });

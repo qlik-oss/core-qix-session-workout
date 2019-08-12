@@ -17,7 +17,7 @@ function getEnigmaConfig(sessionId) {
   return {
     url: (config.direct) ? `${websocketUrlPart}://${config.host}:9076/app/engineData` : `${websocketUrlPart}://${config.host}${config.docpath}`,
     schema: qixSchema,
-    createSocket: url => new WebSocket(url, {
+    createSocket: (url) => new WebSocket(url, {
       rejectUnauthorized: false,
       headers,
     }),
@@ -51,7 +51,7 @@ async function getFieldNames(qix) {
   );
 
   const sessionLayout = await sessionObject.getLayout();
-  return sessionLayout.qFieldList.qItems.map(i => i.qName);
+  return sessionLayout.qFieldList.qItems.map((i) => i.qName);
 }
 
 // Private method for making a random selection in a random field. Triggered by interact.

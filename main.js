@@ -102,9 +102,9 @@ const argv = yargs // eslint-disable-line
     let config = {};
     let foundConfig = require(configPath); // eslint-disable-line
     if (typeof foundConfig === 'function') {
-      config = Object.assign({}, foundConfig());
+      config = { ...foundConfig() };
     } else {
-      config = Object.assign({}, foundConfig);
+      config = { ...foundConfig };
     }
     return config;
   })

@@ -20,7 +20,7 @@
     "request": "2.88.0",
     "seedrandom": "3.0.3",
     "ws": "7.1.2",
-    "yargs": "13.3.0"
+    "yargs": "14.0.0"
   },
   "engines": {
     "node": ">=8.0.x"

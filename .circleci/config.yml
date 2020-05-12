@@ -24,5 +24,5 @@ jobs:
       - run:
           name: Run test
           command: |
-            DocID=$(curl -s --data-binary @data/drugcases.qvf http://localhost:9076/v1/apps/import | jq -r '.attributes.id')
-            node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js -d $DocID --sessionLength 5000 --exit true
+            DocID=$(curl -s --data-binary @apps/drugcases.qvf http://localhost:9076/v1/apps/import | jq -r '.attributes.id')
+            node main.js -c configs/direct-local.json -s scenarios/random-selection-scenario.js -d $DocID --sessionLength 5000 --exit

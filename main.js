@@ -61,6 +61,11 @@ const argv = yargs // eslint-disable-line
       type: 'string',
       alias: 'c',
     },
+    docPath: {
+      description: 'Document path for app to be used',
+      type: 'string',
+      alias: 'd',
+    },
     scenario: {
       description: 'Path to scenario file',
       type: 'string',

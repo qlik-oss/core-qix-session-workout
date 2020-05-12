@@ -109,7 +109,13 @@ exports.connect = async (sessionId) => {
     const qix = await enigma.create(getEnigmaConfig(sessionId)).open();
     qix.sessionId = sessionId;
 
-    if (config.direct) await qix.openDoc(config.docpath);
+    // Override the docpath in config with commandline
+    const docpath = config.docPath ? config.docPath : config.docpath;
+
+    if (config.direct) {
+      log(`Opening the app: ${docpath}`);
+      await qix.openDoc(docpath);
+    }
 
     fieldNames = await getFieldNames(qix);
     log(`Connected session with id: ${sessionId}`);

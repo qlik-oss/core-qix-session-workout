@@ -197,6 +197,5 @@ exports.start = async (workerNr, config, mainStream) => {
     disconnect(sessions);
   }, SESSION_LENGTH);
 
-
   await connect(sessions);
 };

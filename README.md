@@ -2,6 +2,8 @@
 
 [![CircleCI](https://circleci.com/gh/qlik-oss/core-qix-session-workout.svg?style=svg)](https://circleci.com/gh/qlik-oss/core-qix-session-workout)
 
+*As of 1 July 2020, Qlik Core is no longer available to new customers. No further maintenance will be done in this repository.*
+
 Generic load test tool for Qlik Core.
 
 This is an experimental tool and its APIs is under redesign.
